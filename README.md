@@ -58,24 +58,20 @@ You take a vow to finish one goal. Until its checks pass, every AI agent you use
 
 <table align="center">
   <tr>
-    <td align="center" width="110"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/logos/claude-dark.png"><img src="assets/logos/claude.png" width="44" height="44" alt="Claude Code"></picture><br><b>Claude Code</b><br><sub>hard lock</sub></td>
-    <td align="center" width="110"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/logos/cursor-dark.png"><img src="assets/logos/cursor.png" width="44" height="44" alt="Cursor"></picture><br><b>Cursor</b><br><sub>hard lock</sub></td>
-    <td align="center" width="110"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/logos/codex-dark.png"><img src="assets/logos/codex.png" width="44" height="44" alt="Codex CLI"></picture><br><b>Codex CLI</b><br><sub>rules</sub></td>
-    <td align="center" width="110"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/logos/gemini-dark.png"><img src="assets/logos/gemini.png" width="44" height="44" alt="Gemini CLI"></picture><br><b>Gemini CLI</b><br><sub>rules</sub></td>
+    <td align="center" width="110"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/logos/claude-dark.png"><img src="assets/logos/claude.png" width="44" height="44" alt="Claude Code"></picture><br><b>Claude Code</b><br><sub>works ✅</sub></td>
+    <td align="center" width="110"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/logos/cursor-dark.png"><img src="assets/logos/cursor.png" width="44" height="44" alt="Cursor"></picture><br><b>Cursor</b><br><sub>works ✅</sub></td>
+    <td align="center" width="110"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/logos/codex-dark.png"><img src="assets/logos/codex.png" width="44" height="44" alt="Codex CLI"></picture><br><b>Codex CLI</b><br><sub>works ✅</sub></td>
+    <td align="center" width="110"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/logos/gemini-dark.png"><img src="assets/logos/gemini.png" width="44" height="44" alt="Gemini CLI"></picture><br><b>Gemini CLI</b><br><sub>works ✅</sub></td>
   </tr>
   <tr>
-    <td align="center" width="110"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/logos/windsurf-dark.png"><img src="assets/logos/windsurf.png" width="44" height="44" alt="Windsurf"></picture><br><b>Windsurf</b><br><sub>rules</sub></td>
-    <td align="center" width="110"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/logos/chatgpt-dark.png"><img src="assets/logos/chatgpt.png" width="44" height="44" alt="ChatGPT"></picture><br><b>ChatGPT</b><br><sub>pasted prompt</sub></td>
-    <td align="center" width="110"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/logos/grok-dark.png"><img src="assets/logos/grok.png" width="44" height="44" alt="Grok"></picture><br><b>Grok</b><br><sub>pasted prompt</sub></td>
-    <td align="center" width="110"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/logos/claude-dark.png"><img src="assets/logos/claude.png" width="44" height="44" alt="claude.ai"></picture><br><b>claude.ai</b><br><sub>pasted prompt</sub></td>
+    <td align="center" width="110"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/logos/windsurf-dark.png"><img src="assets/logos/windsurf.png" width="44" height="44" alt="Windsurf"></picture><br><b>Windsurf</b><br><sub>works ✅</sub></td>
+    <td align="center" width="110"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/logos/chatgpt-dark.png"><img src="assets/logos/chatgpt.png" width="44" height="44" alt="ChatGPT"></picture><br><b>ChatGPT</b><br><sub>works ✅</sub></td>
+    <td align="center" width="110"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/logos/grok-dark.png"><img src="assets/logos/grok.png" width="44" height="44" alt="Grok"></picture><br><b>Grok</b><br><sub>works ✅</sub></td>
+    <td align="center" width="110"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/logos/claude-dark.png"><img src="assets/logos/claude.png" width="44" height="44" alt="claude.ai"></picture><br><b>claude.ai</b><br><sub>works ✅</sub></td>
   </tr>
 </table>
 
-| Strength | What it means |
-|---|---|
-| **Hard lock** | The agent's own hooks run `vow guard` before your prompt reaches the model. Blocked prompts never get through, and the model can't talk its way past them. |
-| **Rules** | The agent's global rules tell it to run `vow guard` before every task and obey the answer. Models follow this well, but nothing outside the model enforces it. |
-| **Pasted prompt** | Chat apps have no hooks. `vow prompt` copies a vow you paste at the top of a chat: honor system. |
+How each one is locked (hooks, rules or a pasted prompt) is explained in the [guide](GUIDE.md#8-how-each-ai-agent-is-locked).
 
 <sub>Logos are trademarks of their respective owners, shown only to indicate compatibility. Icons from <a href="https://github.com/lobehub/lobe-icons">Lobe Icons</a>.</sub>
 
