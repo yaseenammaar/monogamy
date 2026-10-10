@@ -2,6 +2,17 @@
 
 **One project at a time. Till deploy do us part.**
 
+[![Visitors](https://visitor-badge.laobi.icu/badge?page_id=yaseenammaar.monogamy&left_text=visitors)](https://github.com/yaseenammaar/monogamy)
+[![GitHub stars](https://img.shields.io/github/stars/yaseenammaar/monogamy?style=flat&logo=github)](https://github.com/yaseenammaar/monogamy/stargazers)
+[![GitHub forks](https://img.shields.io/github/forks/yaseenammaar/monogamy?style=flat&logo=github)](https://github.com/yaseenammaar/monogamy/network/members)
+[![Last commit](https://img.shields.io/github/last-commit/yaseenammaar/monogamy?style=flat)](https://github.com/yaseenammaar/monogamy/commits/main)
+[![Open issues](https://img.shields.io/github/issues/yaseenammaar/monogamy?style=flat)](https://github.com/yaseenammaar/monogamy/issues)
+[![Platform: macOS | Linux](https://img.shields.io/badge/platform-macOS%20%7C%20Linux-black?style=flat)](GUIDE.md)
+[![Python](https://img.shields.io/badge/python-3-3776AB?style=flat&logo=python&logoColor=white)](GUIDE.md)
+[![Works with 8 agents](https://img.shields.io/badge/works%20with-8%20AI%20agents-8A2BE2?style=flat)](#works-with)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue?style=flat)](LICENSE)
+[![PRs welcome](https://img.shields.io/badge/PRs-welcome-brightgreen?style=flat)](https://github.com/yaseenammaar/monogamy/pulls)
+
 > New here? Read the full **[guide](GUIDE.md)**: setup, every command, how each agent is locked, Mori, testing and troubleshooting.
 
 You take a vow to finish one goal. Until its checks pass, every AI agent you use refuses to work on anything else. Off-topic ideas get parked, not lost. Mori, a tiny sweet death angel, floats on your desktop to keep watch.
