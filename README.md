@@ -41,71 +41,157 @@ You take a vow to finish one goal. Until its checks pass, every AI agent you use
   </tr>
 </table>
 
-## Install
+## How it works
+
+<p align="center"><img src="assets/flow.svg" width="100%" alt="Flow: you, your AI agent, vow guard, then allowed, blocked or tamper-blocked; vow done runs every check"></p>
+
+1. **You type a prompt** into any AI agent.
+2. **Before the model sees it**, the agent's hook runs `vow guard`, which reads your vow from `~/.monogamy/state.json`.
+3. **The guard decides where you are:**
+   - **Inside the vow's project:** allowed. The agent is reminded to work only on the vow and to park anything unrelated.
+   - **Outside the project:** blocked. Your prompt is saved to the parking lot, the attempt is logged, and you see the lock warning.
+   - **The agent tries to cheat** (run `vow breakup`, confirm a check, edit the lock or the vow file): blocked.
+4. **When you think you're done**, `vow done` runs every check again. All pass: shipped, your streak goes up, and every agent is unlocked. Any fail: the lock holds.
+5. **Mori** reads the same state file every 1.5 seconds, so she always shows where you stand.
+
+## Works with
+
+<table align="center">
+  <tr>
+    <td align="center" width="110"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/logos/dark/claude-color.png"><img src="assets/logos/light/claude-color.png" width="44" height="44" alt="Claude Code"></picture><br><b>Claude Code</b><br><sub>hard lock</sub></td>
+    <td align="center" width="110"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/logos/dark/cursor.png"><img src="assets/logos/light/cursor.png" width="44" height="44" alt="Cursor"></picture><br><b>Cursor</b><br><sub>hard lock</sub></td>
+    <td align="center" width="110"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/logos/dark/codex-color.png"><img src="assets/logos/light/codex-color.png" width="44" height="44" alt="Codex CLI"></picture><br><b>Codex CLI</b><br><sub>rules</sub></td>
+    <td align="center" width="110"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/logos/dark/gemini-color.png"><img src="assets/logos/light/gemini-color.png" width="44" height="44" alt="Gemini CLI"></picture><br><b>Gemini CLI</b><br><sub>rules</sub></td>
+  </tr>
+  <tr>
+    <td align="center" width="110"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/logos/dark/windsurf.png"><img src="assets/logos/light/windsurf.png" width="44" height="44" alt="Windsurf"></picture><br><b>Windsurf</b><br><sub>rules</sub></td>
+    <td align="center" width="110"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/logos/dark/openai.png"><img src="assets/logos/light/openai.png" width="44" height="44" alt="ChatGPT"></picture><br><b>ChatGPT</b><br><sub>pasted prompt</sub></td>
+    <td align="center" width="110"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/logos/dark/grok.png"><img src="assets/logos/light/grok.png" width="44" height="44" alt="Grok"></picture><br><b>Grok</b><br><sub>pasted prompt</sub></td>
+    <td align="center" width="110"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/logos/dark/claude-color.png"><img src="assets/logos/light/claude-color.png" width="44" height="44" alt="claude.ai"></picture><br><b>claude.ai</b><br><sub>pasted prompt</sub></td>
+  </tr>
+</table>
+
+| Strength | What it means |
+|---|---|
+| **Hard lock** | The agent's own hooks run `vow guard` before your prompt reaches the model. Blocked prompts never get through, and the model can't talk its way past them. |
+| **Rules** | The agent's global rules tell it to run `vow guard` before every task and obey the answer. Models follow this well, but nothing outside the model enforces it. |
+| **Pasted prompt** | Chat apps have no hooks. `vow prompt` copies a vow you paste at the top of a chat: honor system. |
+
+<sub>Logos are trademarks of their respective owners, shown only to indicate compatibility. Icons from <a href="https://github.com/lobehub/lobe-icons">Lobe Icons</a>.</sub>
+
+## How to use it, step by step
+
+<p align="center"><img src="assets/story.svg" width="100%" alt="Storyboard: take a vow, wander off and get blocked, idea parked, checks pass, ship it"></p>
+
+### Step 1: Install
 
 ```bash
-./bin/vow install      # wires up every agent it finds (backs up anything it touches)
-./bin/vow pet          # summon Mori
+git clone https://github.com/yaseenammaar/monogamy.git && cd monogamy
 ```
 
-## Use
+```bash
+./bin/vow install
+```
 
-From any agent, just talk: *"/vow lock me into shipping the login flow"*. Or use the CLI directly:
+This wires the lock into every agent it finds and backs up anything it touches (`*.monogamy-bak`). It also links a `vow` command onto your `PATH`, or prints an alias for you to add.
+
+### Step 2: Summon Mori
+
+```bash
+vow pet
+```
+
+She floats in a corner of your screen, asleep until you take a vow. Tap her for status, drag her anywhere, right-click to quit.
+
+### Step 3: Take a vow
+
+Just tell your agent, from inside the project:
+
+```
+/vow lock me into shipping the login flow
+```
+
+Or use the CLI. Each `--check` must pass before you're free:
 
 ```bash
 vow set "Ship Google login" \
   --check "tests pass::npm test" \
-  --check "PR merged::gh pr view 12 --json state -q .state | grep -qx MERGED" \
   --url   "live::https://acme.dev/login" \
   --manual "logged in on my phone" \
   --deadline 5d
-
-vow            # status
-vow check      # run the checks
-vow done       # verify everything and end the vow (only works if every check passes)
-vow park "…"   # save an off-topic idea for later
-vow lot        # see the parking lot
-vow prompt     # copy a vow prompt for ChatGPT / Grok / claude.ai
 ```
 
-Human-only commands (they refuse to run unless you type them in a real terminal):
+The checks freeze the moment the vow is set.
+
+### Step 4: Work, and let the lock do its job
+
+- Inside the project, agents help as normal, but only with the vow.
+- Anywhere else, prompts are blocked and the lock warning appears.
+- New ideas are parked, not lost:
 
 ```bash
-vow confirm 4  # prove a manual check, with evidence
-vow breakup    # abandon the vow: type a shame phrase, wait 10s, lose your streak
-vow uninstall  # refused while a vow is active
+vow park "rewrite the landing page in Svelte"
 ```
 
-## How hard is the lock, per agent?
+```bash
+vow lot
+```
 
-| Agent | How | Strength |
-|---|---|---|
-| Claude Code | `/vow` skill + `SessionStart`, `UserPromptSubmit`, `PreToolUse` hooks | 🔒 Hard: prompts outside the project are blocked and auto-parked. The agent can't run `breakup`/`confirm` or edit the lock files. |
-| Cursor | `beforeSubmitPrompt` + `beforeShellExecution` hooks | 🔒 Hard (prompt + shell) |
-| Codex CLI, Gemini CLI, Windsurf | Global rules file: agent runs `vow guard` before each task | 🤝 Strong nudge (the model follows the rules) |
-| ChatGPT, Grok, claude.ai | `vow prompt`, paste at the top of a chat | 🤝 Honor system (no hooks exist in chat apps) |
+### Step 5: Check your progress
 
-Codex and Gemini also have experimental hook systems. `vow guard --agent codex|gemini` already speaks their formats if you want to wire those up by hand.
+```bash
+vow
+```
 
-**Honest fine print:** it's your computer, so you *can* always rip the hooks out of your config files by hand. Monogamy makes sure no AI can do that for you, and that quitting is loud, slow and logged.
+```bash
+vow check
+```
+
+Or just tap Mori.
+
+### Step 6: Prove the manual checks
+
+Some checks only you can verify. Prove them in your own terminal, with evidence:
+
+```bash
+vow confirm 3
+```
+
+### Step 7: Ship it
+
+```bash
+vow done
+```
+
+Every check runs again. If all pass: shipped, streak +1, every agent unlocked, and your parking lot is waiting for you.
+
+### If you give up
+
+```bash
+vow breakup
+```
+
+Human only. You type a shame phrase, wait through a 10-second countdown, and lose your streak. Mori has a few words for you on the way out.
 
 ## Mori 🪽
 
 A floating desktop pet (macOS, native Swift + WebKit). It reads `~/.monogamy/state.json` live.
 
-- **Tap**: a compact card with the goal, a progress bar, and one status dot per check (hover a check for details). Re-check from the card. Esc or tap again to close.
+- **Tap**: a compact card with the task, a progress bar, and one status dot per subtask (hover one for details). Re-check from the card. Esc or tap again to close.
 - **Drag**: move her anywhere (she remembers where)
 - **Right-click**: re-check / quit
 - **Moods** (shown only by her face): sleepy (no vow), focused, angry (you just got caught sneaking off), worried (overdue or past day 7), happy (all checks pass, or just shipped)
 
-Open `widget/pet.html` in a browser to preview every mood with fake data.
+Open `widget/pet.html` in a browser to preview every mood, shape and idle trick with fake data.
+
+**Honest fine print:** it's your computer, so you *can* always rip the hooks out of your config files by hand. Monogamy makes sure no AI can do that for you, and that quitting is loud, slow and logged.
 
 ## Files
 
 ```
-tools/readme_art.py     renders the animated SVGs in assets/ (python3 tools/readme_art.py)
-bin/vow                 the whole brain: CLI, hook guard for every agent, installer
+bin/vow                   the whole brain: CLI, hook guard for every agent, installer
 adapters/claude/SKILL.md  the /vow skill (installed to ~/.claude/skills/vow)
-widget/                 Mori: Pet.swift, pet.html, build.sh → widget/build/Mori.app
-~/.monogamy/state.json  your vow, parking lot, history, shame log
+widget/                   Mori: Pet.swift, pet.html, build.sh → widget/build/Mori.app
+tools/readme_art.py       renders the animated SVGs in assets/ (python3 tools/readme_art.py)
+~/.monogamy/state.json    your vow, parking lot, history, shame log
 ```
