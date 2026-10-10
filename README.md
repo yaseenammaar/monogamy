@@ -18,6 +18,22 @@ You take a vow to finish one goal. Until its checks pass, every AI agent you use
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
 
+## Who is this for?
+
+**For you if:**
+
+- You have five half-built side projects and keep starting a sixth.
+- You build with AI agents. Starting things is nearly free now, and finishing is the hard part.
+- You're an indie hacker or solo founder who chases a new idea whenever the current one gets boring.
+- Your brain loves new ideas more than finished ones, and willpower alone hasn't fixed that.
+- You have a deadline and need everything else to wait until it's met.
+
+**Probably not for you if:**
+
+- Your job means switching between repos all day, like on-call, support or reviewing a team's code.
+- You need a hard block inside ChatGPT or Grok. Chat apps have no hooks, so there it's an honor system.
+- You want to be stopped from switching even by hand. Monogamy stops your AI agents, not your keyboard.
+
 ## Meet Mori
 
 <p align="center"><img src="assets/mori-shapes.svg" width="200" alt="Mori morphing between her four shapes"></p>
