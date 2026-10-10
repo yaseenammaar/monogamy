@@ -20,20 +20,20 @@ You take a vow to finish one goal. Until its checks pass, every AI agent you use
 
 ## Who is this for?
 
-**For you if:**
+**You, probably, if:**
 
-- You have ADHD, or a brain that works like it. Ideas arrive faster than you can finish them, every new one feels urgent, and you've started more projects than you can count. Monogamy gives you structure from the outside, so finishing doesn't depend on willpower in the moment, and it parks every new idea so none of them is lost. (It's a focus tool, not a treatment.)
-- You have five half-built side projects and keep starting a sixth.
-- You build with AI agents. Starting things is nearly free now, and finishing is the hard part.
-- You're an indie hacker or solo founder who chases a new idea whenever the current one gets boring.
-- Your brain loves new ideas more than finished ones, and willpower alone hasn't fixed that.
-- You have a deadline and need everything else to wait until it's met.
+- **You're a vibe coder.** You "quickly started" 14 apps this month and shipped zero. Your Desktop is a graveyard of folders called `new-idea-final-v2`.
+- **You have ADHD, or a brain that throws ideas like confetti.** Every idea feels like The One for about 40 minutes. Mori is the friend who holds your ideas while you finish the current one. Nothing gets lost: it just waits in the parking lot. (A focus tool, not medical advice.)
+- **You have "too many tabs" energy.** Nine repos open, three half-built SaaS apps, and one crypto bot you swear was a joke.
+- **You build with AI agents.** Starting is free now. Claude will happily scaffold project #15 at 2am. Mori won't let it.
+- **You're an indie hacker** whose best new idea shows up the exact moment the current one gets boring. That isn't intuition. That's boredom.
+- **You have a deadline,** and the rest of the universe can wait.
 
-**Probably not for you if:**
+**Not for you if:**
 
-- Your job means switching between repos all day, like on-call, support or reviewing a team's code.
-- You need a hard block inside ChatGPT or Grok. Chat apps have no hooks, so there it's an honor system.
-- You want to be stopped from switching even by hand. Monogamy stops your AI agents, not your keyboard.
+- **Your job is context switching** (on-call, support, reviewing everyone's PRs). Mori would block you straight into unemployment.
+- **You want ChatGPT or Grok hard-locked.** Chat apps have no hooks, so there it's pinky-promise mode.
+- **You expect it to stop your hands.** Monogamy blocks your AI agents, not your keyboard. You can still cheat by hand. Mori will know.
 
 ## Meet Mori
 
