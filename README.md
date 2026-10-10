@@ -58,16 +58,16 @@ You take a vow to finish one goal. Until its checks pass, every AI agent you use
 
 <table align="center">
   <tr>
-    <td align="center" width="110"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/logos/dark/claude-color.png"><img src="assets/logos/light/claude-color.png" width="44" height="44" alt="Claude Code"></picture><br><b>Claude Code</b><br><sub>hard lock</sub></td>
-    <td align="center" width="110"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/logos/dark/cursor.png"><img src="assets/logos/light/cursor.png" width="44" height="44" alt="Cursor"></picture><br><b>Cursor</b><br><sub>hard lock</sub></td>
-    <td align="center" width="110"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/logos/dark/codex-color.png"><img src="assets/logos/light/codex-color.png" width="44" height="44" alt="Codex CLI"></picture><br><b>Codex CLI</b><br><sub>rules</sub></td>
-    <td align="center" width="110"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/logos/dark/gemini-color.png"><img src="assets/logos/light/gemini-color.png" width="44" height="44" alt="Gemini CLI"></picture><br><b>Gemini CLI</b><br><sub>rules</sub></td>
+    <td align="center" width="110"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/logos/claude-dark.png"><img src="assets/logos/claude.png" width="44" height="44" alt="Claude Code"></picture><br><b>Claude Code</b><br><sub>hard lock</sub></td>
+    <td align="center" width="110"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/logos/cursor-dark.png"><img src="assets/logos/cursor.png" width="44" height="44" alt="Cursor"></picture><br><b>Cursor</b><br><sub>hard lock</sub></td>
+    <td align="center" width="110"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/logos/codex-dark.png"><img src="assets/logos/codex.png" width="44" height="44" alt="Codex CLI"></picture><br><b>Codex CLI</b><br><sub>rules</sub></td>
+    <td align="center" width="110"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/logos/gemini-dark.png"><img src="assets/logos/gemini.png" width="44" height="44" alt="Gemini CLI"></picture><br><b>Gemini CLI</b><br><sub>rules</sub></td>
   </tr>
   <tr>
-    <td align="center" width="110"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/logos/dark/windsurf.png"><img src="assets/logos/light/windsurf.png" width="44" height="44" alt="Windsurf"></picture><br><b>Windsurf</b><br><sub>rules</sub></td>
-    <td align="center" width="110"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/logos/dark/openai.png"><img src="assets/logos/light/openai.png" width="44" height="44" alt="ChatGPT"></picture><br><b>ChatGPT</b><br><sub>pasted prompt</sub></td>
-    <td align="center" width="110"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/logos/dark/grok.png"><img src="assets/logos/light/grok.png" width="44" height="44" alt="Grok"></picture><br><b>Grok</b><br><sub>pasted prompt</sub></td>
-    <td align="center" width="110"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/logos/dark/claude-color.png"><img src="assets/logos/light/claude-color.png" width="44" height="44" alt="claude.ai"></picture><br><b>claude.ai</b><br><sub>pasted prompt</sub></td>
+    <td align="center" width="110"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/logos/windsurf-dark.png"><img src="assets/logos/windsurf.png" width="44" height="44" alt="Windsurf"></picture><br><b>Windsurf</b><br><sub>rules</sub></td>
+    <td align="center" width="110"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/logos/chatgpt-dark.png"><img src="assets/logos/chatgpt.png" width="44" height="44" alt="ChatGPT"></picture><br><b>ChatGPT</b><br><sub>pasted prompt</sub></td>
+    <td align="center" width="110"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/logos/grok-dark.png"><img src="assets/logos/grok.png" width="44" height="44" alt="Grok"></picture><br><b>Grok</b><br><sub>pasted prompt</sub></td>
+    <td align="center" width="110"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/logos/claude-dark.png"><img src="assets/logos/claude.png" width="44" height="44" alt="claude.ai"></picture><br><b>claude.ai</b><br><sub>pasted prompt</sub></td>
   </tr>
 </table>
 
