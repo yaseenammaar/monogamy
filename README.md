@@ -22,6 +22,7 @@ You take a vow to finish one goal. Until its checks pass, every AI agent you use
 
 **For you if:**
 
+- You have ADHD, or a brain that works like it. Ideas arrive faster than you can finish them, every new one feels urgent, and you've started more projects than you can count. Monogamy gives you structure from the outside, so finishing doesn't depend on willpower in the moment, and it parks every new idea so none of them is lost. (It's a focus tool, not a treatment.)
 - You have five half-built side projects and keep starting a sixth.
 - You build with AI agents. Starting things is nearly free now, and finishing is the hard part.
 - You're an indie hacker or solo founder who chases a new idea whenever the current one gets boring.
