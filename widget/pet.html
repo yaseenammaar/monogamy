@@ -1,0 +1,462 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Mori</title>
+<style>
+  :root {
+    --card: rgba(255, 255, 255, .96);
+    --ink: #1e1830;
+    --muted: #8a839c;
+    --line: rgba(30, 24, 48, .08);
+    --track: rgba(30, 24, 48, .08);
+    --ok: #2fa36b;
+    --bad: #d9546b;
+    --idle: #c4bfd0;
+    --accent: #6b55c4;
+    --pill: rgba(30, 24, 48, .78);
+    --pill-ink: #fff;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --card: rgba(28, 24, 38, .96);
+      --ink: #f1eef7;
+      --muted: #8f88a3;
+      --line: rgba(255, 255, 255, .08);
+      --track: rgba(255, 255, 255, .1);
+      --ok: #5cc995;
+      --bad: #f07a8e;
+      --idle: #4d4760;
+      --accent: #a594f0;
+      --pill: rgba(241, 238, 247, .88);
+      --pill-ink: #1e1830;
+    }
+  }
+  html, body { margin: 0; height: 100%; background: transparent; overflow: hidden; }
+  body {
+    font: 12px/1.4 -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif;
+    color: var(--ink); -webkit-user-select: none; user-select: none; -webkit-font-smoothing: antialiased;
+  }
+  #root {
+    position: fixed; inset: 0; padding: 6px 8px 8px; box-sizing: border-box;
+    display: flex; flex-direction: column; align-items: flex-end; justify-content: flex-end; gap: 6px;
+  }
+
+  /* card */
+  .card {
+    display: none; width: 240px; box-sizing: border-box; padding: 12px 13px 11px;
+    background: var(--card); border-radius: 14px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, .18), 0 0 0 .5px var(--line);
+    animation: in .16s ease-out; transform-origin: 80% 100%;
+  }
+  .open .card { display: block; }
+  @keyframes in { from { opacity: 0; transform: translateY(4px) scale(.98) } to { opacity: 1; transform: none } }
+  .goal { margin: 0 0 9px; font-size: 13px; font-weight: 600; letter-spacing: -.01em; line-height: 1.3; }
+  .meta { margin: 2px 0 9px; color: var(--muted); font-size: 11px; }
+  .meta .late { color: var(--bad); }
+  .bar { height: 3px; background: var(--track); border-radius: 2px; overflow: hidden; margin-bottom: 10px; }
+  .bar i { display: block; height: 100%; width: 0; background: var(--accent); transition: width .4s ease; }
+  .checks { list-style: none; margin: 0; padding: 0; display: grid; gap: 5px; }
+  .checks li { display: flex; align-items: center; gap: 8px; min-width: 0; }
+  .checks .dot { flex: none; width: 6px; height: 6px; border-radius: 50%; background: var(--idle); }
+  .checks .ok .dot { background: var(--ok); }
+  .checks .bad .dot { background: var(--bad); }
+  .checks .name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .checks .idle .name { color: var(--muted); }
+  .foot {
+    display: flex; justify-content: space-between; align-items: center; gap: 8px;
+    margin-top: 11px; padding-top: 9px; border-top: .5px solid var(--line); color: var(--muted); font-size: 10.5px;
+  }
+  .link { font: inherit; font-weight: 600; color: var(--accent); background: none; border: 0; padding: 0; cursor: pointer; }
+  .link:disabled { color: var(--muted); cursor: default; }
+
+  /* pet */
+  .pet { width: 104px; display: flex; flex-direction: column; align-items: center; cursor: grab; }
+  .pet:active { cursor: grabbing; }
+  .pet svg { width: 100px; height: 108px; overflow: visible; }
+  .badge {
+    margin-top: -2px; padding: 2px 8px; border-radius: 99px; background: var(--pill); color: var(--pill-ink);
+    font-size: 10.5px; font-weight: 600; font-variant-numeric: tabular-nums; white-space: nowrap;
+  }
+
+  /* mood → face parts */
+  .m { display: none; }
+  [data-mood="focused"] .m-dots, [data-mood="angry"] .m-dots, [data-mood="worried"] .m-dots,
+  [data-mood="happy"] .m-arcs, [data-mood="sleepy"] .m-shut,
+  [data-mood="angry"] .m-angry, [data-mood="worried"] .m-worried,
+  [data-mood="focused"] .m-smile, [data-mood="happy"] .m-smile, [data-mood="sleepy"] .m-smile,
+  [data-mood="angry"] .m-frown, [data-mood="worried"] .m-frown { display: inline; }
+
+  /* browser preview only */
+  #demo { position: fixed; top: 10px; left: 10px; right: 10px; display: none; gap: 6px; flex-wrap: wrap; }
+  #demo span { width: 100%; height: 0; }
+  html.demo { background: #d9d5e3; }
+  @media (prefers-color-scheme: dark) { html.demo { background: #141118; } }
+  .demo #demo { display: flex; }
+</style>
+</head>
+<body>
+<div id="demo"></div>
+<div id="root">
+  <section class="card" id="card" aria-live="polite"></section>
+
+  <div class="pet" id="pet" title="Mori">
+    <svg viewBox="0 0 120 130" id="mori" data-mood="focused" aria-label="Mori">
+      <ellipse id="shadow" cx="60" cy="123" rx="22" ry="3.5" fill="#000" opacity=".14"/>
+      <g id="char">
+        <path id="wingL" d="M0,0 C-12,-12 -24,-8 -27,3 C-18,3 -10,8 -1,16 Z" fill="#d3cce6"/>
+        <path id="wingR" d="M0,0 C-12,-12 -24,-8 -27,3 C-18,3 -10,8 -1,16 Z" fill="#d3cce6"/>
+        <g id="scythe">
+          <line id="staff" x1="0" y1="0" x2="0" y2="80" stroke="#8d84a6" stroke-width="2.4" stroke-linecap="round"/>
+          <path d="M0,0 Q11,-4 16,7 Q8,2 0,5 Z" fill="#c9c1dd"/>
+        </g>
+        <path id="body" fill="#4a3d73"/>
+        <ellipse id="hood" fill="#2c2445"/>
+        <ellipse id="face" fill="#f6f1ea"/>
+        <!-- face parts, drawn for a face of radius 18.5 centred on 0,0 -->
+        <g id="feat">
+          <g id="eyes"><g class="m m-dots" fill="#1e1830">
+            <circle cx="-7" cy="-0.5" r="2.5"/><circle cx="7" cy="-0.5" r="2.5"/>
+          </g></g>
+          <g fill="none" stroke="#1e1830" stroke-width="1.8" stroke-linecap="round">
+            <g class="m m-arcs"><path d="M-10,0.5 Q-7,-3.5 -4,0.5"/><path d="M4,0.5 Q7,-3.5 10,0.5"/></g>
+            <g class="m m-shut"><path d="M-10,0 L-4,0"/><path d="M4,0 L10,0"/></g>
+            <g class="m m-angry"><path d="M-11,-6.5 L-4,-4"/><path d="M11,-6.5 L4,-4"/></g>
+            <g class="m m-worried"><path d="M-11,-4 L-4,-6.5"/><path d="M11,-4 L4,-6.5"/></g>
+            <path class="m m-smile" d="M-2.5,6.5 Q0,8.5 2.5,6.5"/>
+            <path class="m m-frown" d="M-2.5,8 Q0,6 2.5,8"/>
+          </g>
+        </g>
+        <ellipse id="halo" fill="none" stroke="#e6c26a" stroke-width="2.4"/>
+      </g>
+    </svg>
+    <div class="badge" id="badge"></div>
+  </div>
+</div>
+
+<script>
+(() => {
+  const bridge = window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.mori;
+  const send = msg => bridge && bridge.postMessage(msg);
+  const $ = id => document.getElementById(id);
+  const SMALL = { w: 130, h: 160 }, WIDE = 264;
+  let state = null, open = false, rechecking = false, mood = 'focused';
+
+  // =====================================================================
+  // Mori's body: four poses that share one parametric shape, so any pose
+  // can morph smoothly into any other.
+  // =====================================================================
+  const POSES = {
+    // A: round and squishy (landing, napping)
+    blob:  { cx: 60, top: 36, w: 76, hemW: 46, hemY: 104, hemAmp: 1.5, hemCurve: 8, bulge: 7, rot0: 0,
+             hoodX: 60, hoodY: 68, hoodRx: 21, hoodRy: 21, faceX: 60, faceY: 70, faceRx: 17, faceRy: 17, faceS: .92,
+             haloX: 60, haloY: 21, haloRx: 13, haloRy: 3.4, wingDX: 32, wingY: 66, wingS: .8, wingR: -12,
+             scX: 101, scY1: 46, scY2: 108, shadowRx: 26 },
+    // B: tall and stretched (dragging)
+    ghost: { cx: 60, top: 18, w: 36, hemW: 36, hemY: 108, hemAmp: 5, hemCurve: 0, bulge: 0, rot0: 0,
+             hoodX: 60, hoodY: 40, hoodRx: 13, hoodRy: 13, faceX: 60, faceY: 42, faceRx: 10.5, faceRy: 10, faceS: .57,
+             haloX: 60, haloY: 10, haloRx: 11, haloRy: 3, wingDX: 14, wingY: 46, wingS: .85, wingR: 18,
+             scX: 88, scY1: 22, scY2: 116, shadowRx: 16 },
+    // C: big head, tiny body (resting, talking)
+    chibi: { cx: 60, top: 20, w: 68, hemW: 46, hemY: 114, hemAmp: 4, hemCurve: 0, bulge: -9, rot0: 0,
+             hoodX: 60, hoodY: 57, hoodRx: 26, hoodRy: 26, faceX: 60, faceY: 59, faceRx: 22, faceRy: 22, faceS: 1.19,
+             haloX: 60, haloY: 12, haloRx: 15, haloRy: 3.8, wingDX: 17, wingY: 92, wingS: .75, wingR: -5,
+             scX: 91, scY1: 70, scY2: 118, shadowRx: 22 },
+    // D: tilted bean (curious, hovering)
+    bean:  { cx: 60, top: 30, w: 58, hemW: 52, hemY: 100, hemAmp: 1, hemCurve: 9, bulge: 5, rot0: -8,
+             hoodX: 58, hoodY: 62, hoodRx: 20, hoodRy: 18, faceX: 58, faceY: 64, faceRx: 16.5, faceRy: 15, faceS: .89,
+             haloX: 56, haloY: 18, haloRx: 13, haloRy: 3.4, wingDX: 26, wingY: 64, wingS: .78, wingR: -8,
+             scX: 99, scY1: 42, scY2: 110, shadowRx: 24 },
+  };
+  // Effects layered on top of the pose; all spring-animated too.
+  const FX = { offY: 0, sx: 1, sy: 1, rot: 0, lookX: 0, spin: 0, flapAmp: 1, flapSpeed: 1, scythe: 0, floatAmp: 1, blink: 1 };
+
+  const tgt = { ...POSES.chibi, ...FX }, cur = { ...tgt }, vel = {};
+  for (const k in cur) vel[k] = 0;
+  const setPose = name => Object.assign(tgt, POSES[name]);
+  const lerp = (a, b, t) => a + (b - a) * t;
+  const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
+  const n1 = v => v.toFixed(1);
+
+  // Outline = head arc (9 pts) + right side (3) + scalloped hem (9) + left side (3),
+  // joined with a closed Catmull-Rom spline.
+  function bodyPath(c) {
+    const r = c.w / 2, hy = c.top + r, R = c.cx + c.hemW / 2, L = c.cx - c.hemW / 2, p = [];
+    for (let i = 0; i <= 8; i++) { const a = Math.PI * (1 + i / 8); p.push([c.cx + r * Math.cos(a), hy + r * Math.sin(a)]); }
+    for (let i = 1; i <= 3; i++) { const t = i / 4; p.push([lerp(c.cx + r, R, t) + c.bulge * Math.sin(Math.PI * t), lerp(hy, c.hemY, t)]); }
+    for (let i = 0; i <= 8; i++) { const u = i / 8; p.push([lerp(R, L, u), c.hemY + c.hemCurve * Math.sin(Math.PI * u) + (i % 2 ? c.hemAmp : 0)]); }
+    for (let i = 1; i <= 3; i++) { const t = i / 4; p.push([lerp(L, c.cx - r, t) - c.bulge * Math.sin(Math.PI * t), lerp(c.hemY, hy, t)]); }
+    const n = p.length;
+    let d = `M${n1(p[0][0])},${n1(p[0][1])}`;
+    for (let i = 0; i < n; i++) {
+      const p0 = p[(i - 1 + n) % n], a = p[i], b = p[(i + 1) % n], p3 = p[(i + 2) % n];
+      d += `C${n1(a[0] + (b[0] - p0[0]) / 6)},${n1(a[1] + (b[1] - p0[1]) / 6)} ` +
+           `${n1(b[0] - (p3[0] - a[0]) / 6)},${n1(b[1] - (p3[1] - a[1]) / 6)} ${n1(b[0])},${n1(b[1])}`;
+    }
+    return d + 'Z';
+  }
+
+  // ---------- physics + drawing loop ----------
+  const K = 170, D = 15;           // springy, a little bouncy
+  let flapPhase = 0, last = performance.now();
+  const el = id => $(id);
+  const E = { char: el('char'), body: el('body'), hood: el('hood'), face: el('face'), feat: el('feat'), eyes: el('eyes'),
+              halo: el('halo'), wingL: el('wingL'), wingR: el('wingR'), scythe: el('scythe'), staff: el('staff'), shadow: el('shadow') };
+  const attr = (e, o) => { for (const k in o) e.setAttribute(k, o[k]); };
+
+  function frame(now) {
+    // Real elapsed time in small fixed substeps: stable, and still correct if frames get throttled.
+    const dt = Math.min((now - last) / 1000, .5);
+    last = now;
+    for (let left = dt; left > 0; left -= 1 / 120) {
+      const h = Math.min(left, 1 / 120);
+      for (const k in tgt) {
+        vel[k] += ((tgt[k] - cur[k]) * K - vel[k] * D) * h;
+        cur[k] += vel[k] * h;
+      }
+    }
+    const c = cur, t = now / 1000;
+    flapPhase += dt * Math.PI * 2 * .7 * c.flapSpeed;
+    const flap = Math.sin(flapPhase) * 7 * c.flapAmp;
+    const floatY = Math.sin(t * Math.PI * 2 / 3.4) * 2.5 * c.floatAmp;
+    const shake = mood === 'angry' && !dragging ? Math.sin(t * Math.PI * 2 * 7) * 1.6 : 0;
+    const oy = c.offY + floatY;
+
+    attr(E.char, { transform: `translate(${n1(shake)} ${n1(oy)}) translate(60 118) scale(${c.sx.toFixed(3)} ${c.sy.toFixed(3)}) translate(-60 -118) rotate(${n1(c.rot + c.rot0)} 60 72)` });
+    E.body.setAttribute('d', bodyPath(c));
+    attr(E.hood, { cx: n1(c.hoodX), cy: n1(c.hoodY), rx: n1(c.hoodRx), ry: n1(c.hoodRy) });
+    attr(E.face, { cx: n1(c.faceX), cy: n1(c.faceY), rx: n1(c.faceRx), ry: n1(c.faceRy) });
+    attr(E.feat, { transform: `translate(${n1(c.faceX + c.lookX * c.faceS)} ${n1(c.faceY)}) scale(${c.faceS.toFixed(3)})` });
+    attr(E.eyes, { transform: `scale(1 ${clamp(c.blink, .08, 1).toFixed(2)})` });
+    attr(E.halo, { cx: n1(c.haloX), cy: n1(c.haloY), rx: (Math.abs(Math.cos(c.spin)) * c.haloRx + .8).toFixed(1), ry: n1(c.haloRy) });
+    attr(E.wingL, { transform: `translate(${n1(c.cx - c.wingDX)} ${n1(c.wingY)}) rotate(${n1(c.wingR + flap)}) scale(${c.wingS.toFixed(2)})` });
+    attr(E.wingR, { transform: `translate(${n1(c.cx + c.wingDX)} ${n1(c.wingY)}) scale(${(-c.wingS).toFixed(2)} ${c.wingS.toFixed(2)}) rotate(${n1(c.wingR + flap)})` });
+    const len = c.scY2 - c.scY1;
+    E.staff.setAttribute('y2', n1(len));
+    attr(E.scythe, { transform: `translate(${n1(c.scX)} ${n1(c.scY1 + len / 2)}) rotate(${n1(c.scythe)}) translate(0 ${n1(-len / 2)})` });
+    attr(E.shadow, { rx: n1(c.shadowRx * c.sx * (1 - clamp(-oy / 40, 0, .4))) });
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+
+  // =====================================================================
+  // Behaviour: which pose to hold, plus little idle performances.
+  // =====================================================================
+  let dragging = false, hovering = false, busy = false;
+  const restPose = () => dragging ? 'ghost' : open ? 'chibi' : hovering ? 'bean' : mood === 'sleepy' ? 'blob' : 'chibi';
+  const refreshPose = () => { if (!busy || dragging) setPose(restPose()); };
+  const later = (ms, fn) => setTimeout(fn, ms);
+  const squash = (amt = 1) => { vel.sy -= 2.6 * amt; vel.sx += 2.1 * amt; };
+
+  function applyMood() {
+    tgt.floatAmp = mood === 'sleepy' ? .5 : 1;
+    tgt.flapSpeed = mood === 'sleepy' ? .35 : 1;
+    refreshPose();
+  }
+
+  // blink
+  (function blink() {
+    later(2600 + Math.random() * 3200, () => {
+      if (mood !== 'sleepy') { cur.blink = tgt.blink = .1; later(110, () => { tgt.blink = 1; }); }
+      blink();
+    });
+  })();
+
+  // happy: little hops
+  setInterval(() => { if (mood === 'happy' && !dragging) { vel.offY -= 95; vel.sy += 1.4; } }, 2400);
+
+  const IDLE = {
+    squish()  { busy = true; setPose('blob'); later(1500, () => { busy = false; refreshPose(); squash(.6); }); },
+    look()    { tgt.lookX = -3; later(700, () => { tgt.lookX = 3; }); later(1400, () => { tgt.lookX = 0; }); },
+    spin()    { tgt.spin = Math.PI * 2; later(1300, () => { cur.spin = tgt.spin = vel.spin = 0; }); },
+    flutter() { tgt.flapAmp = 2.6; tgt.flapSpeed = 3.2; vel.offY -= 80;
+                later(1100, () => { tgt.flapAmp = 1; tgt.flapSpeed = mood === 'sleepy' ? .35 : 1; }); },
+    twirl()   { tgt.scythe = 360; later(1400, () => { cur.scythe = tgt.scythe = vel.scythe = 0; }); },
+    stretch() { busy = true; setPose('ghost'); later(650, () => { busy = false; refreshPose(); squash(); }); },
+    peek()    { busy = true; setPose('bean'); tgt.lookX = -2.5; later(1300, () => { busy = false; tgt.lookX = 0; refreshPose(); }); },
+  };
+  (function idleLoop() {
+    later(6000 + Math.random() * 7000, () => {
+      if (!dragging && !hovering && !open && !busy) {
+        const pool = mood === 'sleepy' ? ['squish', 'stretch'] : Object.keys(IDLE);
+        IDLE[pool[Math.floor(Math.random() * pool.length)]]();
+      }
+      idleLoop();
+    });
+  })();
+
+  // =====================================================================
+  // Status card
+  // =====================================================================
+  const dayOf = g => Math.floor((Date.now() - Date.parse(g.started_at)) / 864e5) + 1;
+  const overdue = g => g.deadline && new Date().toISOString().slice(0, 10) > g.deadline;
+  const result = (g, ch) => ((g.last_check || {}).results || []).find(r => r.name === ch.name);
+  const okOf = (g, ch) => ch.type === 'manual' ? !!ch.confirmed : (result(g, ch) ? result(g, ch).ok : null);
+  const detail = (g, ch) => ch.type === 'manual'
+    ? (ch.confirmed ? 'Proof: ' + ch.confirmed.evidence : 'Confirm by hand: vow confirm')
+    : (result(g, ch) ? result(g, ch).detail : 'Not checked yet');
+  const prog = g => [g.checks.filter(c => okOf(g, c)).length, g.checks.length];
+
+  function moodOf(s) {  // mirrors mood() in bin/vow
+    if (!s || !s.goal) {
+      const last = s && (s.history || []).slice(-1)[0];
+      return last && last.outcome === 'shipped' && Date.now() - Date.parse(last.ended_at) < 864e5 ? 'happy' : 'sleepy';
+    }
+    const cheats = (s.shame_log || []).filter(x => x.kind === 'blocked' || x.kind === 'tamper');
+    const lastCheat = cheats[cheats.length - 1];
+    if (lastCheat && Date.now() - Date.parse(lastCheat.at) < 10 * 60e3) return 'angry';
+    const [p, n] = prog(s.goal);
+    if (n && p === n) return 'happy';
+    if (overdue(s.goal) || dayOf(s.goal) > 7) return 'worried';
+    return 'focused';
+  }
+
+  const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+
+  function render() {
+    const s = state, g = s && s.goal;
+    const m = moodOf(s);
+    if (m !== mood) { mood = m; $('mori').setAttribute('data-mood', m); applyMood(); }
+    if (!g) {
+      const shipped = m === 'happy';
+      $('badge').textContent = shipped ? 'Shipped' : 'No vow';
+      $('card').innerHTML = shipped
+        ? `<p class="goal">Shipped.</p><p class="meta">Streak ${s.streak}. ${s.parking_lot.length} ideas waiting in the lot.</p>`
+        : `<p class="goal">No active vow</p><p class="meta">Start one with /vow set</p>`;
+      return;
+    }
+    const [p, n] = prog(g);
+    $('badge').textContent = `${p}/${n}`;
+    $('card').innerHTML = `
+      <p class="goal">${esc(g.title)}</p>
+      <div class="bar"><i style="width:${n ? (p / n) * 100 : 0}%"></i></div>
+      <ul class="checks">${g.checks.map(ch => {
+        const ok = okOf(g, ch);
+        const cls = ok ? 'ok' : (ok === false && ch.type !== 'manual' ? 'bad' : 'idle');
+        return `<li class="${cls}" title="${esc(detail(g, ch))}"><span class="dot"></span><span class="name">${esc(ch.name)}</span></li>`;
+      }).join('')}</ul>
+      <div class="foot"><span>No one can override this vow.</span>
+        <button class="link" id="recheck" ${rechecking ? 'disabled' : ''}>${rechecking ? 'Checking…' : 'Re-check'}</button></div>`;
+    $('recheck').onclick = () => {
+      rechecking = true; render();
+      if (bridge) send({ type: 'recheck' }); else setTimeout(window.moriRecheckDone, 800);
+    };
+  }
+
+  function setOpen(v) {
+    open = v;
+    $('root').classList.toggle('open', v);
+    if (v) {
+      const h = $('card').getBoundingClientRect().height + $('pet').getBoundingClientRect().height + 22;
+      send({ type: 'resize', w: WIDE, h: Math.ceil(h) });
+    } else {
+      send({ type: 'resize', w: SMALL.w, h: SMALL.h });
+    }
+    refreshPose();
+  }
+
+  // =====================================================================
+  // Input: tap, drag (stretch + lean), hover (lean toward cursor)
+  // =====================================================================
+  let down = null, lastMove = null, vx = 0, vy = 0;
+  const pet = $('pet');
+  pet.addEventListener('mousedown', e => {
+    if (e.button !== 0) return;
+    down = { x: e.screenX, y: e.screenY };
+    lastMove = { x: e.screenX, y: e.screenY, t: performance.now() };
+    vx = vy = 0;
+    send({ type: 'dragStart' });
+  });
+  window.addEventListener('mousemove', e => {
+    if (!down) {
+      if (hovering && !open) {
+        const r = pet.getBoundingClientRect();
+        tgt.rot = clamp((e.clientX - (r.left + r.width / 2)) / 5, -9, 9);
+      }
+      return;
+    }
+    const dx = e.screenX - down.x, dy = e.screenY - down.y;
+    if (!dragging && Math.hypot(dx, dy) < 4) return;
+    if (!dragging) {
+      dragging = true; busy = false; refreshPose();
+      tgt.flapAmp = 2.4; tgt.flapSpeed = 3.4;
+    }
+    const now = performance.now(), dt = Math.max(now - lastMove.t, 1);
+    vx = vx * .7 + ((e.screenX - lastMove.x) / dt) * .3;
+    vy = vy * .7 + ((e.screenY - lastMove.y) / dt) * .3;
+    lastMove = { x: e.screenX, y: e.screenY, t: now };
+    tgt.rot = clamp(-vx * 16, -22, 22);                       // dangle behind the motion
+    tgt.sy = 1 + clamp(Math.hypot(vx, vy) * .08, 0, .12);     // stretch with speed
+    tgt.sx = 1 - (tgt.sy - 1) * .7;
+    send({ type: 'drag', dx, dy });
+  });
+  window.addEventListener('mouseup', () => {
+    if (!down) return;
+    down = null;
+    if (dragging) {
+      dragging = false;
+      send({ type: 'dragEnd' });
+      tgt.rot = 0; tgt.sx = tgt.sy = 1;
+      tgt.flapAmp = 1; tgt.flapSpeed = mood === 'sleepy' ? .35 : 1;
+      busy = true; setPose('blob'); squash(1.2);                // splat on landing
+      later(380, () => { busy = false; refreshPose(); });
+    } else {
+      squash(.8);                                               // boing
+      setOpen(!open);
+    }
+  });
+  pet.addEventListener('mouseenter', () => { hovering = true; refreshPose(); });
+  pet.addEventListener('mouseleave', () => { hovering = false; if (!dragging) tgt.rot = 0; refreshPose(); });
+  window.addEventListener('keydown', e => { if (e.key === 'Escape' && open) setOpen(false); });
+  pet.addEventListener('contextmenu', e => { e.preventDefault(); send({ type: 'menu' }); });
+  document.addEventListener('contextmenu', e => e.preventDefault());
+
+  // ---------- bridge API ----------
+  window.moriUpdate = s => { state = s; render(); if (open) setOpen(true); };
+  window.moriRecheckDone = () => { rechecking = false; render(); };
+  setInterval(render, 30e3); // time-based moods
+  render();
+
+  // ---------- browser preview: fake data, moods and idle tricks ----------
+  if (!bridge) {
+    document.documentElement.classList.add('demo');
+    const t = m => new Date(Date.now() - m * 60e3).toISOString();
+    const base = {
+      streak: 2, history: [], shame_log: [{ kind: 'blocked', at: t(600) }],
+      parking_lot: [{ idea: 'Rewrite the landing page in Svelte' }, { idea: 'Recipe app' }],
+      goal: {
+        title: 'Ship Google login for Acme', project: '/Users/you/code/acme', started_at: t(60 * 24 * 2 + 30), deadline: null,
+        checks: [
+          { type: 'cmd', name: 'Tests pass' }, { type: 'cmd', name: 'Build passes' },
+          { type: 'url', name: 'Live on prod' }, { type: 'manual', name: 'Logged in on my phone' }],
+        last_check: { at: t(12), results: [
+          { name: 'Tests pass', ok: true, detail: '42 passing' }, { name: 'Build passes', ok: true, detail: 'built in 3.1s' },
+          { name: 'Live on prod', ok: false, detail: 'HTTP 404' }] }
+      }
+    };
+    const allOk = { ...base.goal, checks: base.goal.checks.map(c => c.type === 'manual' ? { ...c, confirmed: { evidence: 'screenshot' } } : c),
+      last_check: { at: t(1), results: base.goal.checks.map(c => ({ name: c.name, ok: true, detail: 'ok' })) } };
+    const variants = {
+      focused: base,
+      angry: { ...base, shame_log: [{ kind: 'blocked', at: t(1) }] },
+      worried: { ...base, goal: { ...base.goal, started_at: t(60 * 24 * 9), deadline: '2026-01-01' } },
+      happy: { ...base, goal: allOk },
+      sleepy: { ...base, goal: null, shame_log: [] },
+    };
+    const poses = ['chibi', 'ghost', 'blob', 'bean'];
+    $('demo').innerHTML = Object.keys(variants).map(k => `<button data-k="${k}">${k}</button>`).join('') + '<span></span>' +
+      Object.keys(IDLE).map(k => `<button data-i="${k}">${k}</button>`).join('') + '<span></span>' +
+      poses.map(k => `<button data-p="${k}">hold ${k}</button>`).join('') + '<button data-p="">release</button>';
+    $('demo').addEventListener('click', e => {
+      const d = e.target.dataset;
+      if (d.k) window.moriUpdate(variants[d.k]);
+      if (d.i) IDLE[d.i]();
+      if (d.p !== undefined) { busy = !!d.p; if (d.p) setPose(d.p); else refreshPose(); }
+    });
+    window.moriUpdate(base);
+  }
+})();
+</script>
+</body>
+</html>
