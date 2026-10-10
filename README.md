@@ -18,6 +18,29 @@ You take a vow to finish one goal. Until its checks pass, every AI agent you use
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
 
+## Meet Mori
+
+<p align="center"><img src="assets/mori-shapes.svg" width="200" alt="Mori morphing between her four shapes"></p>
+
+<p align="center">One body, four shapes: <b>chibi</b> when resting, <b>bean</b> when you hover, <b>tall ghost</b> when you drag her, <b>blob</b> when you drop her.</p>
+
+<table align="center">
+  <tr>
+    <td align="center"><img src="assets/mori-focused.svg" width="110" alt="Focused"></td>
+    <td align="center"><img src="assets/mori-happy.svg" width="110" alt="Happy"></td>
+    <td align="center"><img src="assets/mori-angry.svg" width="110" alt="Angry"></td>
+    <td align="center"><img src="assets/mori-worried.svg" width="110" alt="Worried"></td>
+    <td align="center"><img src="assets/mori-sleepy.svg" width="110" alt="Sleepy"></td>
+  </tr>
+  <tr>
+    <td align="center"><b>Focused</b><br><sub>working on the vow</sub></td>
+    <td align="center"><b>Happy</b><br><sub>all checks pass</sub></td>
+    <td align="center"><b>Angry</b><br><sub>caught sneaking off</sub></td>
+    <td align="center"><b>Worried</b><br><sub>overdue</sub></td>
+    <td align="center"><b>Sleepy</b><br><sub>no vow</sub></td>
+  </tr>
+</table>
+
 ## Install
 
 ```bash
@@ -80,6 +103,7 @@ Open `widget/pet.html` in a browser to preview every mood with fake data.
 ## Files
 
 ```
+tools/readme_art.py     renders the animated SVGs in assets/ (python3 tools/readme_art.py)
 bin/vow                 the whole brain: CLI, hook guard for every agent, installer
 adapters/claude/SKILL.md  the /vow skill (installed to ~/.claude/skills/vow)
 widget/                 Mori: Pet.swift, pet.html, build.sh → widget/build/Mori.app
